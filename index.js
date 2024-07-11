@@ -13,7 +13,7 @@ import jsonwebtoken from 'jsonwebtoken'; //genera token para poder operar en el 
 
 import cookieParser from 'cookie-parser'; // permite leer cookies desde el servidor, lo utilizamos para la autorización
 
-import {metodos as autorizacion} from './middlewares/autorizacion.js'
+import { metodos as autorizacion } from './middlewares/autorizacion.js'
 
 // Create an Express app
 const app = express();
@@ -127,16 +127,17 @@ app.put('/crud-reservas/:id', async (req, res) => {
             //si se actualizo correctamente
             res.status(200).json({
                 mensaje: 'Reserva actualizada', //envia mensaje al front
-            });}
-
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({
-                mensaje: 'error al actualizar reserva', //envia mensaje al front
             });
         }
 
-    });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            mensaje: 'error al actualizar reserva', //envia mensaje al front
+        });
+    }
+
+});
 
 // Borrar una reserva
 app.delete('/crud-reservas/:id', async (req, res) => {
@@ -160,7 +161,7 @@ app.delete('/crud-reservas/:id', async (req, res) => {
                 mensaje: 'reserva borrada exitosamente'
             });
         }
-        
+
     } catch (error) {
         res.status(500).json({
             mensaje: 'Internal server error'
@@ -175,7 +176,7 @@ app.post('/registro.html', async (req, res) => {
     const contrasena = req.body.contrasena
     const promociones = req.body.promociones
 
-    console.log({usuario});
+    console.log({ usuario });
 
     if (!usuario || !mail || !contrasena) {
         res.json({
@@ -232,9 +233,9 @@ app.post('/login.html', async (req, res) => {
                 console.log('El usuario EXISTE', rows[0].contrasena);
                 //el usuario existe entonces
                 //comparo la pass que recibo del front con la guardada en la db
-                const loginCorrecto = await bcryptjs.compare(contrasena,rows[0].contrasena);
+                const loginCorrecto = await bcryptjs.compare(contrasena, rows[0].contrasena);
                 // console.log(loginCorrecto);
-                if(!loginCorrecto){
+                if (!loginCorrecto) {
                     res.json({
                         mensaje: "Usuario o contraseña incorrecta"
                     })
@@ -246,17 +247,17 @@ app.post('/login.html', async (req, res) => {
                     console.log("token: ", token)
 
                     //se configura la cookie
-                   const cookieOption = {
-                    expires: new Date(Date.now()+process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 1000),
-                    path: "/"
-                   } 
-                   
-                   //se envia la cookie al usuario
-                   res.cookie("jwt",token,cookieOption);
-                // res.send({mensaje:"Usuario Loggeado",redirect:"/admin.html"})
-                //OJO mandar un json en el send tambien funciona(revisar diferencias .send y .json) 
-                res.json({mensaje:"Usuario Loggeado",redirect:"/catalogo.html"})  
-            }
+                    const cookieOption = {
+                        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 1000),
+                        path: "/"
+                    }
+
+                    //se envia la cookie al usuario
+                    res.cookie("jwt", token, cookieOption);
+                    // res.send({mensaje:"Usuario Loggeado",redirect:"/admin.html"})
+                    //OJO mandar un json en el send tambien funciona(revisar diferencias .send y .json) 
+                    res.json({ mensaje: "Usuario Loggeado", redirect: "/catalogo.html" })
+                }
 
             }
         }
@@ -281,12 +282,13 @@ app.put('/usuarios/:id', async (req, res) => {
         if (rows.affectedRows === 0) {
             //si no encontro ningun registro
             res.status(404).json({
-                mensaje:'No existe el usuario requerido', //envia mensaje al front
+                mensaje: 'No existe el usuario requerido', //envia mensaje al front
             });
-        }else{
-        res.status(200).json({
-           mensaje: `el usuario seleccionado fue actualizado`
-        });}
+        } else {
+            res.status(200).json({
+                mensaje: `el usuario seleccionado fue actualizado`
+            });
+        }
     } catch (error) {
         res.Status(500).send('Internal server error')
     }
@@ -311,7 +313,7 @@ app.delete('/usuarios/:id', async (req, res) => {
     }
 });
 
-app.get('/admin',autorizacion.soloAdmin, async(req,res)=>{
+app.get('/admin', autorizacion.soloAdmin, async (req, res,) => {
     const sql = `SELECT reservas.id, usuarios.usuario, usuarios.mail, usuarios.promociones,
                 reservas.fecha, reservas.hora, reservas.personas, reservas.sucursal
                 FROM reservas
@@ -325,7 +327,7 @@ app.get('/admin',autorizacion.soloAdmin, async(req,res)=>{
         res.json(rows);
 
     } catch (error) {
-        res.send(500).send('Internal server error')
+        res.status(500).send('Internal server error')
     }
 
 });
