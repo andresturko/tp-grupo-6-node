@@ -2,10 +2,10 @@ import { createPool } from 'mysql2/promise';
 
 // Create a connection pool
 const pool = createPool({
-    host: 'localhost',
-    user: 'root',
-    password: 'maradona1986',
-    database: 'caferarte',
+    host: 'mysql-turko.alwaysdata.net',
+    user: 'turko',
+    password: '2024nodegrupo6',
+    database: 'turko_caferarte',
     connectionLimit: 5 // Adjust the connection limit as per your requirements
 });
 
